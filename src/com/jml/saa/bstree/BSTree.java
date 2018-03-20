@@ -216,4 +216,97 @@ public class BSTree<T extends Comparable<T>> {
             return p.key;
         return null;
     }
+
+    /*
+    删除结点
+     */
+
+    /**
+     *
+     * @param bst 二叉树
+     * @param z 被删除的结点
+     * @return
+     */
+    private BSTNode<T> remove(BSTree<T> bst, BSTNode<T> z) {
+        BSTNode<T> x = null;
+        BSTNode<T> y = null;
+
+        if ((z.left == null) || (z.right == null)) {
+            y = z;
+        }
+        else
+            y = successor(z);
+
+        if (y.left != null)
+            x = y.left;
+        else
+            x = y.right;
+
+        if (x != null)
+            x.parent = y.parent;
+
+        if (y.parent == null)
+            bst.mRoot = x;
+        else if (y == y.parent)
+            y.parent.left = x;
+        else
+            y.parent.right = x;
+
+        if (y != z)
+            z.key = y.key;
+        return y;
+    }
+
+    /**
+     * 删除结点
+     * @param key
+     * @return
+     */
+    public void remove(T key) {
+        BSTNode<T> z, node;
+        if ((z = search(mRoot, key)) != null)
+            if ((node = remove(this, z)) != null)
+                node = null;
+    }
+
+    //打印二叉树
+
+    /**
+     *
+     * @param tree
+     * @param key 节点的值
+     * @param direction 0 表示结点是根节点 -1表示该节点是他的父节点的左孩子 1 表示是他的父节点的右孩子
+     */
+    private void print(BSTNode<T> tree, T key, int direction) {
+        if (tree != null) {
+            if (direction == 0) {
+                System.out.printf("%2d is root\n", tree.key);
+            }else {
+                System.out.printf("%2d is %2d's %6s child\n", tree.key, key, direction == 1?"right" : "left");
+            }
+            print(tree.left, tree.key, -1);
+            print(tree.right, tree.key, 1);
+        }
+    }
+
+    public void print() {
+        if (mRoot != null)
+            print(mRoot, mRoot.key, 0);
+    }
+
+    //销毁二叉树
+    private void destroy(BSTNode<T> tree) {
+        if (tree == null)
+            return;
+
+        if (tree.left != null)
+            destroy(tree.left);
+        if (tree.right != null)
+            destroy(tree.right);
+    }
+
+    public void clear() {
+        destroy(mRoot);
+        mRoot = null;
+    }
 }
